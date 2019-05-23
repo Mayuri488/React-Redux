@@ -2,6 +2,8 @@ import React, {Component} from 'react';
 import './App.css';
 import {connect} from 'react-redux'
 import { updateUser } from './actions/userActions'
+import { apiRequest} from './actions/apirequest'
+//import {bindActionCreators} from 'redux';
 
 class App extends Component{
 
@@ -10,25 +12,49 @@ class App extends Component{
     this.onUpdateUser = this.onUpdateUser.bind(this);
   }
 
-  onUpdateUser(){
-    this.props.onUpdateUser('Pradnya');
+  componentDidMount(){
+    setTimeout(()=> {
+      this.props.onApiRequest();
+    }, 1500);
+    
+  }
+  onUpdateUser(event){
+   this.props.onUpdateUser(event.target.value);
   }
 
   render(){
+    console.log('render :'+ JSON.stringify(this.props));
     return (<div className="App">
-    <div onClick= {this.onUpdateUser}>Update User</div>
+    <input onChange={this.onUpdateUser}></input>
     {this.props.users}
   </div>)
   }
 }
 
-const mapStatesToProps = state => ({
-  products: state.products,
-  users: state.users
-});
+const mapStatesToProps = (state, props) => {
+  console.log('mapStatesToProps : '+JSON.stringify(props))  ;
+
+  return{
+    products: state.products,
+    users: state.users,
+    userPlusProp: `${state.users} ${props.aRandomProps}`
+  }
+};
+
+// const mapActionToProps = (dispatch, props) => {
+//   return bindActionCreators({
+//     onUpdateUser : updateUser
+//   }, dispatch);
+// }
 
 const mapActionToProps = {
-onUpdateUser : updateUser
-}
+  onUpdateUser : updateUser,
+  onApiRequest : apiRequest
+ }
 
+
+// const mergeProps = (propsFromState, propsFromDispatch, ownProps) => {
+//   console.log('merge :'+propsFromState, propsFromDispatch, ownProps);
+//   return {}
+// }
 export default connect(mapStatesToProps, mapActionToProps)(App);
